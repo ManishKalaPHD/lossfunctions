@@ -14,9 +14,9 @@ The implementation is designed to support transparency, reproducibility (subject
 
 ## Implemented Loss Functions (Paper-Aligned)
 
-This section follows the **exact numbering and structure used in Section 5 of the paper**, ensuring a direct correspondence between the manuscript and the implementation.
+This section follows the exact structure used in the **Loss functions for operational avalanche forecasting ** Section of the paper.
 
-### 5.1 Binary Cross-Entropy (BCE)
+### 1 Binary Cross-Entropy (BCE)
 
 Binary Cross-Entropy is included as the baseline loss function. In the paper, BCE serves as a reference point to illustrate the limitations of standard likelihood-based objectives when applied to highly imbalanced avalanche datasets. The implementation follows the canonical formulation without class reweighting.
 
@@ -74,7 +74,7 @@ This design choice directly reflects the methodological objective of the paper: 
 
 The datasets used in the paper and in this codebase are **not included in this repository**.
 
-Due to data access restrictions, licensing constraints, and institutional agreements, the avalanche forecasting datasets cannot be publicly redistributed. This repository therefore contains **only the model, loss function, and training code**.
+Due to data access restrictions, and institutional constraints, the avalanche forecasting datasets cannot be publicly redistributed. This repository therefore contains **only the model, loss function, and training code**.
 
 Researchers wishing to reproduce the experiments must obtain the datasets independently from the relevant data providers. Once available, the data can be integrated by adapting the data-loading utilities without altering the core experimental pipeline.
 
@@ -94,7 +94,7 @@ This separation is intentional and ensures compliance with data governance requi
 
 This repository is intended for:
 
-* Researchers studying class imbalance in environmental and geophysical forecasting
+* Researchers studying class imbalance in avalanche forecasting
 * Comparative analysis of loss functions under extreme imbalance
 * Extension of AMRL to other rare-event prediction domains
 
