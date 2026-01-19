@@ -86,6 +86,37 @@ The forecasting model follows the architecture described in the paper and is int
 
 Training is performed using the Adam optimizer with gradient clipping for numerical stability. Early stopping based on validation loss is employed to prevent overfitting. All architectural and optimization settings are held constant across loss-function experiments, ensuring that performance differences can be attributed solely to the loss formulation.
 
+### Evaluation Metrics
+
+Model performance is evaluated using a comprehensive set of imbalance-aware and operationally relevant metrics, as described in **Evaluation Metrics** Section of the paper. These metrics are computed from the confusion matrix and implemented as reusable utility functions within the code.
+
+
+**Detection Metrics**
+
+1. **Probability of Detection (POD / Recall):** Proportion of avalanche days correctly identified; the primary operational metric.
+
+2. **Precision (PRE):** Reliability of avalanche predictions, measuring the fraction of predicted avalanche days that are true events.
+
+3. **True Negative Rate (TNR / Specificity):** Ability to correctly reject non-avalanche days.
+   
+
+**Balanced Performance Metrics**
+
+1. **Balanced Accuracy (BA):** Mean of POD and TNR, providing a class-balanced measure of performance.
+
+2. **Geometric Mean (GM):** Square root of the product of POD and TNR, emphasizing simultaneous improvement in both classes.
+   
+
+**Skill Scores**
+
+1. **Heidke Skill Score (HSS):** Measures forecast improvement relative to random chance.
+
+2. **True Skill Statistic (TSS / KSS):** Difference between POD and false-alarm rate; insensitive to event prevalence.
+
+3. **Matthews Correlation Coefficient (MCC):** A robust single-score metric incorporating all elements of the confusion matrix and well suited to imbalanced datasets.
+
+   
+
 ## Dataset Availability
 
 The datasets used in the paper and in this codebase are **not included in this repository**.
