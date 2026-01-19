@@ -74,11 +74,15 @@ This design choice directly reflects the methodological objective of the paper: 
 
 The forecasting model follows the architecture described in the paper and is intentionally kept fixed across all experiments to isolate the effect of loss-function design.
 
-Input Layer: Matches the dimensionality of standardized meteorological and snowpack predictors.
-Hidden Layers: Multiple fully connected (dense) layers with ReLU activations to capture nonlinear relationships.
-Batch Normalization: Layers included to stabilize training and improve convergence under varying loss dynamics.
-Dropout Regularization: Applied to mitigate overfitting, which is particularly important given the rarity of avalanche events.
-Output Layer: A final sigmoid-activated layer that produces probabilistic avalanche forecasts. 
+1. Input Layer: Accepts standardized meteorological and snowpack predictors, matching the dimensionality of the input feature set.
+
+2. Hidden Layers: Multiple fully connected (dense) layers with ReLU activations to model nonlinear relationships between predictors and avalanche occurrence.
+
+3. Batch Normalization: Incorporated after hidden layers to stabilize training and improve convergence across different loss functions.
+
+4. Dropout Regularization: Applied to reduce overfitting, which is especially important given the rarity of avalanche events.
+
+5. Output Layer: A final sigmoid-activated layer that outputs probabilistic avalanche forecasts.
 
 Training is performed using the Adam optimizer with gradient clipping for numerical stability. Early stopping based on validation loss is employed to prevent overfitting. All architectural and optimization settings are held constant across loss-function experiments, ensuring that performance differences can be attributed solely to the loss formulation.
 
