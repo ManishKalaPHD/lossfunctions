@@ -70,6 +70,18 @@ This design choice directly reflects the methodological objective of the paper: 
 
 ---
 
+### Deep Learning Architecture
+
+The forecasting model follows the architecture described in the paper and is intentionally kept fixed across all experiments to isolate the effect of loss-function design.
+
+Input Layer: Matches the dimensionality of standardized meteorological and snowpack predictors.
+Hidden Layers: Multiple fully connected (dense) layers with ReLU activations to capture nonlinear relationships.
+Batch Normalization: Layers included to stabilize training and improve convergence under varying loss dynamics.
+Dropout Regularization: Applied to mitigate overfitting, which is particularly important given the rarity of avalanche events.
+Output Layer: A final sigmoid-activated layer that produces probabilistic avalanche forecasts. 
+
+Training is performed using the Adam optimizer with gradient clipping for numerical stability. Early stopping based on validation loss is employed to prevent overfitting. All architectural and optimization settings are held constant across loss-function experiments, ensuring that performance differences can be attributed solely to the loss formulation.
+
 ## Dataset Availability
 
 The datasets used in the paper and in this codebase are **not included in this repository**.
