@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module (`loss_functions_for_rare_events.py`) is a Python script exported from a Google Colab notebook. It is designed to **benchmark multiple loss functions for rare-event (imbalanced) binary classification problems** using a consistent deep learning architecture and a common set of evaluation metrics.
+The Python script (`loss_functions_for_rare_events.py`) is designed to **benchmark multiple loss functions for rare-event (imbalanced) binary classification problems** using a consistent deep learning architecture and a common set of evaluation metrics.
 
 The script performs the following high-level tasks:
 
