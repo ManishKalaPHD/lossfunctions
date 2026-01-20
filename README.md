@@ -44,19 +44,8 @@ The proposed **Asymmetric Margin Reinforcement Loss (AMRL)** corresponds to **Se
 
 ## Code Structure
 
-The repository structure mirrors the experimental workflow described in **Sections 4 and 5 of the paper**, with particular emphasis on loss-function experimentation. Unlike modular loss libraries, **all loss functions are implemented as distinct methods within the training code**, ensuring consistent data flow, shared model state, and identical optimization conditions across experiments.
+The repository structure mirrors the experimental workflow described in relevant sections of the paper, with particular emphasis on loss-function experimentation. Unlike modular loss libraries, **all loss functions are implemented as distinct methods within the training code**, ensuring consistent data flow, shared model state, and identical optimization conditions across experiments. The detailed structure is defined in code_structure.md file.
 
-```
-├── main_training_script.py      # Implements all loss functions as selectable methods
-├── model_definition.py          # Neural network architecture (Section 4.2)
-├── evaluation_metrics.py        # POD, FAR, BA, GM, HSS, TSS, MCC (Section 4.3)
-├── data_loader.py               # Dataset ingestion and preprocessing (Section 4.1)
-├── config.py                    # Hyperparameters and experiment configuration
-├── notebooks/
-│   └── exploratory_analysis.ipynb
-├── requirements.txt
-└── README.md
-```
 
 ### Loss Function Implementation Strategy
 
