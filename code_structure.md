@@ -28,8 +28,8 @@ Below is a structured, technical explanation of the key methods, the **deep netw
 * **Purpose:** Combine reinforcement learning concepts with focal loss.
 * **Core idea:**
 
-  * Treats prediction confidence as a policy.
-  * Uses policy gradient–style weighting for hard-to-classify samples.
+  * Treats Probability of Detection (POD) optimization as guiding force behind weight updation.
+  * Uses modulated weighting for hard-to-classify samples.
 * **Key mechanisms:**
 
   * Focal scaling factor (γ) to down-weight easy samples.
@@ -40,7 +40,7 @@ Below is a structured, technical explanation of the key methods, the **deep netw
 
 #### (c) **ClassBalancedLossTF**
 
-* **Purpose:** Reweight loss terms using the *effective number of samples*.
+* **Purpose:** Reweight loss terms using the *effective number of samples* for majority and minority classes.
 * **Key mechanism:**
 
   * Uses class frequency–based weights derived from:
@@ -80,64 +80,18 @@ Below is a structured, technical explanation of the key methods, the **deep netw
 #### (b) **Custom Train Step for PGFL**
 
 * Uses explicit `GradientTape` control.
-* Computes reward-weighted gradients.
+* Computes weights based on POD values for validation set.
 * Ensures numerical stability during policy-gradient updates.
 
 ---
 
-#### (c) **Custom GAN Training Step**
-
-* Separates:
-
-  * Generator optimization
-  * Discriminator optimization
-* Applies alternating updates with independent gradient clipping.
-* Integrates forecasting loss with adversarial loss.
+####
 
 ---
 
 ## 2. Deep Network Architecture Used
 
-### 2.1 Generator Network (Forecasting Model)
 
-* **Type:** Deep feed-forward neural network (MLP-based)
-* **Structure:**
-
-  * Input layer: Time-series / feature vector
-  * Multiple dense layers with ReLU activation
-  * Output layer:
-
-    * Regression-style forecasting output
-    * Or probability scores for rare-event detection
-* **Role:** Generate realistic future forecasts conditioned on historical data.
-
----
-
-### 2.2 Discriminator Network
-
-* **Type:** Binary classifier
-* **Structure:**
-
-  * Dense layers with nonlinear activations
-  * Final sigmoid output
-* **Role:** Distinguish between:
-
-  * Real observed sequences
-  * Generator-produced forecasts
-* **Training objective:** Improve generator robustness and calibration.
-
----
-
-### 2.3 GAN Framework
-
-* **Training paradigm:** Adversarial + task-specific loss
-* **Loss composition:**
-
-  * Generator: Forecasting loss + adversarial loss
-  * Discriminator: Binary cross-entropy
-* **Benefit:** Encourages realistic distributional forecasting, not just point accuracy.
-
----
 
 ## 3. Evaluation Metrics Utilized
 
