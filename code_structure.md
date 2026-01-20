@@ -1,162 +1,258 @@
-Below is a structured, technical explanation of the key methods, the **deep network architecture**, and the **evaluation metrics** used in the provided notebook
-**“Loss Functions for Imbalanced Datasets.”**
+# Code Structure and Methodology Documentation
+
+## Overview
+
+This module (`loss_functions_for_rare_events.py`) is a Python script exported from a Google Colab notebook. It is designed to **benchmark multiple loss functions for rare-event (imbalanced) binary classification problems** using a consistent deep learning architecture and a common set of evaluation metrics.
+
+The script performs the following high-level tasks:
+
+1. Loads and preprocesses multiple datasets
+2. Defines and compares specialized loss functions for rare events
+3. Trains a neural network model under each loss function
+4. Evaluates performance using threshold-independent and threshold-dependent metrics
+5. Aggregates and summarizes results across datasets
+
+The code is written using **TensorFlow / Keras**, with auxiliary support from **NumPy, Pandas, and scikit-learn**.
 
 ---
 
-## 1. Important Methods and Functional Components
+## Libraries and Dependencies
 
-### 1.1 Custom Loss Functions
+The primary libraries used are:
 
-#### (a) **AMRLLossTF (Asymmetric Margin Reinforcement Loss)**
+* **TensorFlow / Keras**: Model definition, training, custom losses, and metrics
+* **Pandas**: Dataset loading and tabular manipulation
+* **NumPy**: Numerical operations
+* **scikit-learn**:
 
-* **Purpose:** Address extreme class imbalance by applying *asymmetric penalties* to false positives and false negatives.
-* **Core idea:**
-
-  * Introduces **dynamic margins** that adapt during training.
-  * Penalizes minority-class misclassification more aggressively.
-* **Key mechanisms:**
-
-  * Margin-based modification of logits.
-  * Reinforcement-style update using class distribution statistics.
-  * Lambda clipping to avoid instability.
-* **Benefit:** Improves recall for rare events without collapsing precision.
+  * `train_test_split` for dataset splitting
+  * `StandardScaler` for feature normalization
 
 ---
 
-#### (b) **PGFLossTF (Performance Guided Focal Loss)**
+## Data Handling and Preprocessing
 
-* **Purpose:** Combine reinforcement learning concepts with focal loss.
-* **Core idea:**
+### Dataset Loading
 
-  * Treats Probability of Detection (POD) optimization as guiding force behind weight updation.
-  * Uses modulated weighting for hard-to-classify samples.
-* **Key mechanisms:**
+* **`load_data_from_drive(file_path)`**
 
-  * Focal scaling factor (γ) to down-weight easy samples.
-  * Reward-weighted loss adjustment.
-* **Benefit:** Better convergence on skewed datasets where standard focal loss saturates.
+  * Loads datasets from Google Drive or local paths
+  * Returns feature matrix and binary labels
 
----
+### Class Imbalance Utilities
 
-#### (c) **ClassBalancedLossTF**
+* **`get_class_ratio(y)`**
 
-* **Purpose:** Reweight loss terms using the *effective number of samples* for majority and minority classes.
-* **Key mechanism:**
+  * Computes positive-to-negative class ratio
+  * Used to initialize loss reweighting parameters
 
-  * Uses class frequency–based weights derived from:
-    [
-    w_c = \frac{1 - \beta}{1 - \beta^{n_c}}
-    ]
-* **Benefit:** Reduces dominance of majority classes while remaining stable.
+### Train–Test Split and Scaling
+
+* Uses `train_test_split` with stratification
+* Feature normalization via `StandardScaler`
 
 ---
 
-#### (d) **FocalLossTF**
+## Deep Learning Architecture
 
-* **Purpose:** Baseline comparison loss for imbalanced classification.
-* **Key mechanism:**
+Model architecture is encapsulated in **explicit model classes and factory functions**, ensuring reproducibility and modularity.
 
-  * Modulates cross-entropy loss by confidence:
-    [
-    FL = -\alpha (1 - p_t)^\gamma \log(p_t)
-    ]
-* **Role in notebook:** Performance benchmark against AMRL and PGFL.
+### Core Architecture Functions
 
----
+* **`initialize_model(input_dim)`**
 
-### 1.2 Custom Training Steps
+  * Constructs and returns a fully connected neural network
+  * Uses the Keras Functional API
 
-#### (a) **Custom Train Step for AMRL**
+* **`Model` subclasses with `__init__()` and `call()` methods**
 
-* Overrides `train_step()` to:
+  * Encapsulate forward-pass logic
+  * Enable integration with custom training loops
 
-  * Apply **gradient clipping** to prevent exploding gradients.
-  * Clip adaptive margin parameters.
-  * Track per-class loss behavior.
-* Necessary because AMRL involves non-standard gradient flows.
+### Architecture Pattern
 
----
+The neural network follows a consistent structure:
 
-#### (b) **Custom Train Step for PGFL**
+1. **Input Layer**
 
-* Uses explicit `GradientTape` control.
-* Computes weights based on POD values for validation set.
-* Ensures numerical stability during policy-gradient updates.
+   * Shape determined by `input_dim`
 
----
+2. **Hidden Dense Layers**
 
-####
+   * Multiple fully connected layers
+   * Nonlinear activations (e.g., ReLU)
 
----
+3. **Output Layer**
 
-## 2. Deep Network Architecture Used
+   * Single neuron
+   * `sigmoid` activation for probability output
 
-
-
-## 3. Evaluation Metrics Utilized
-
-### 3.1 False Alarm Rate (FAR)
-
-* **Definition:**
-  [
-  FAR = \frac{FP}{FP + TN}
-  ]
-* **Importance:** Critical for forecasting rare but costly events (e.g., alarms).
-* **Used to:** Penalize excessive false positives.
+This architecture remains fixed across experiments to isolate the effect of loss-function design.
 
 ---
 
-### 3.2 Recall (Sensitivity)
+## Loss Functions for Rare Events
 
-* **Definition:**
-  [
-  Recall = \frac{TP}{TP + FN}
-  ]
-* **Importance:** Measures how many rare events are correctly detected.
-* **Primary optimization target** for AMRL.
+The script defines and evaluates **explicitly named loss-function mechanisms and training procedures**, implemented as custom TensorFlow training loops rather than relying solely on `model.fit()`.
 
----
+### Adaptive and Custom Loss Components
 
-### 3.3 Precision
+Key loss-related logic is implemented through the following functions and classes:
 
-* **Definition:**
-  [
-  Precision = \frac{TP}{TP + FP}
-  ]
-* **Used alongside recall** to assess trade-offs introduced by asymmetric losses.
+* **`train_step_amrl()` / `test_step_amrl()`**
 
----
+  * Custom training and evaluation steps for the *Adaptive Margin–Reweighted Loss (AMRL)* variant
+  * Explicit control over:
 
-### 3.4 F1-Score
+    * Forward pass
+    * Loss computation
+    * Gradient calculation
+    * Gradient clipping (`CLIP_NORM`)
 
-* **Definition:**
-  [
-  F1 = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}
-  ]
-* **Purpose:** Balanced metric for imbalanced datasets.
+* **`custom_train_loop()`**
 
----
+  * Orchestrates epoch-level training using `train_step_amrl`
+  * Handles metric tracking and early stopping logic
 
-### 3.5 Training History Plots
+* **`update_alpha_dynamically()`**
 
-* Loss vs. epochs
-* Metric evolution across training
-* Used for:
+  * Dynamically adjusts class-imbalance weighting parameters
+  * Uses moving averages of prediction confidence
 
-  * Diagnosing overfitting
-  * Comparing loss functions (AMRL vs Focal vs Class-Balanced)
+* **`update_confidence_moving_averages()`**
+
+  * Tracks positive and negative class confidence trends
+  * Supports adaptive loss reweighting for rare events
+
+These mechanisms allow the loss function to **adapt during training**, rather than remaining static.
 
 ---
 
-## 4. Summary
+## Model Compilation and Training
 
-* **Key innovation:** AMRL introduces adaptive asymmetric margins combined with reinforcement principles to tackle extreme imbalance.
-* **Modeling approach:** Forecasting GAN with custom loss-driven training steps.
-* **Evaluation focus:** Rare-event sensitivity (Recall, FAR) rather than raw accuracy.
-* **Outcome:** More reliable detection of minority events with controlled false alarms.
+Training is performed using **explicit training loops**, rather than `model.fit()`, to allow fine-grained control over loss dynamics.
 
-If you want, I can next:
+### Training Functions
 
-* Map each loss mathematically to its code implementation
-* Compare AMRL vs focal loss empirically
-* Help you write a paper-ready methodology section based on this notebook
+* **`train_model()`**
+
+  * High-level wrapper that:
+
+    * Initializes the model
+    * Selects the appropriate custom training loop
+    * Tracks metrics and early stopping
+
+* **`custom_train_loop()` / `custom_train_loop_pgfl()`**
+
+  * Epoch-level control over:
+
+    * Forward pass
+    * Backpropagation
+    * Metric updates
+    * Early stopping (`EARLY_STOPPING_PATIENCE`, `MIN_DELTA`)
+
+* **Gradient Clipping**
+
+  * Implemented explicitly using `CLIP_NORM` to stabilize training
+
+---
+
+## Evaluation Metrics
+
+The script implements **domain-specific and imbalance-aware metrics** as standalone functions, in addition to standard Keras metrics.
+
+### Custom Metric Functions
+
+The following functions compute evaluation metrics directly from predictions and ground truth labels:
+
+* **`false_alarm(y_true, y_pred)`**
+  Measures the false alarm rate (false positives among negative instances).
+
+* **`probability_of_detection(y_true, y_pred)`**
+  Measures recall for the rare (positive) class.
+
+* **`bias_score(y_true, y_pred)`**
+  Ratio of predicted positives to actual positives, indicating systematic over- or under-prediction.
+
+* **`heidke_skill_score(y_true, y_pred)`**
+  Skill score comparing the model against random chance.
+
+* **`pierce_skill_score(y_true, y_pred)`**
+  Measures discrimination ability relative to a reference forecast.
+
+* **`f1_score(y_true, y_pred)`**
+  Harmonic mean of precision and recall.
+
+These metrics are particularly common in **rare-event forecasting and risk modeling domains**.
+
+### Keras Metrics
+
+In addition to custom metrics, the model uses:
+
+* `BinaryAccuracy`
+* `Precision`
+* `Recall`
+
+
+---
+
+## Experiment Loop and Result Collection
+
+For each dataset:
+
+1. Iterate over all defined loss functions
+2. Train a fresh model instance
+3. Evaluate performance on the test set
+4. Store results (dataset name, loss type, metrics)
+
+Results are accumulated into a **Pandas DataFrame**, enabling downstream analysis.
+
+---
+
+## Performance Aggregation and Summary
+
+After processing all datasets:
+
+* Metrics are grouped by **Loss_Type**
+* Mean performance is computed across datasets
+* Results are rounded for readability
+
+Example summary operation:
+
+* Average Precision, Recall per loss function
+
+This provides a **global comparison** of loss functions across heterogeneous datasets.
+
+---
+
+## Output and Reporting
+
+* Intermediate results are printed during execution
+* Final summaries are displayed as tabular outputs
+* The structure supports easy export to CSV or LaTeX for academic reporting
+
+---
+
+## Intended Use Cases
+
+* Rare-event prediction (e.g., rare event forecasting, avalanche forecasting)
+* Empirical comparison of loss functions
+* Reproducible deep learning experiments under class imbalance
+
+---
+
+## Notes and Extensions
+
+* The modular structure allows easy addition of new loss functions
+* Architecture can be swapped with minimal code changes
+* Threshold optimization and calibration can be added as a post-processing step
+
+---
+
+## Summary
+
+This codebase provides a **controlled experimental framework** for studying the impact of loss function design on rare-event classification performance, using a consistent neural architecture and a comprehensive evaluation protocol.
+
+
+---
+
