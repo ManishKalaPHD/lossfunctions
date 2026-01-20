@@ -14,7 +14,7 @@ The implementation is designed to support transparency, reproducibility (subject
 
 ## Implemented Loss Functions (Paper-Aligned)
 
-This section follows the exact structure used in the **Loss functions for operational avalanche forecasting ** Section of the paper.
+This section follows the exact structure used in the **Loss functions for operational avalanche forecasting** section of the paper.
 
 ### 1 Binary Cross-Entropy (BCE)
 
@@ -30,21 +30,21 @@ Focal Loss is implemented according to the formulation discussed in the paper, i
 
 ### 4. Class-Balanced Loss (CBL)
 
-Class-Balanced Loss is implemented following the formulation described in **Section 5.4 of the paper**. Instead of relying on raw class frequencies, this loss rescales contributions based on the effective number of samples, thereby providing a principled normalization under severe class imbalance. In the avalanche forecasting context, this improves convergence stability while moderately enhancing minority-class sensitivity.
+Class-Balanced Loss is implemented following the formulation described in the paper. Instead of relying on raw class frequencies, this loss rescales contributions based on the effective number of samples, thereby providing a principled normalization under severe class imbalance. In the avalanche forecasting context, this improves convergence stability while moderately enhancing minority-class sensitivity.
 
 ### 5. Performance-Guided Focal Loss (PGFL)
 
-The **Performance-Guided Focal Loss (PGFL)** proposed in **Section 5.5 of the paper** is implemented directly within the training code as a dedicated loss function method. PGFL extends conventional focal loss by adaptively modulating gradient strength based on model performance, thereby balancing class importance and sample difficulty throughout training. This dynamic behavior reduces overfitting to rare avalanche samples while maintaining high detection capability.
+The **Performance-Guided Focal Loss (PGFL)** is implemented directly within the training code as a dedicated loss function method. PGFL extends conventional focal loss by adaptively modulating gradient strength based on model performance, thereby balancing class importance and sample difficulty throughout training. This dynamic behavior reduces overfitting to rare avalanche samples while maintaining high detection capability.
 
 ### 6. Asymmetric Margin Reinforcement Loss (AMRL)
 
-The proposed **Asymmetric Margin Reinforcement Loss (AMRL)** corresponds to **Section 5.6 of the paper** and constitutes the primary methodological contribution of this work. AMRL introduces class-dependent, trainable margins directly in logit space to explicitly encode the asymmetric risk structure of avalanche forecasting. Avalanche samples are required to exceed a positive safety margin, while non-avalanche samples are constrained by a separate majority margin to limit false alarms. All margin and penalty parameters are optimized jointly with network weights, enabling adaptive and risk-aware decision boundary shaping under extreme class imbalance.
+The proposed **Asymmetric Margin Reinforcement Loss (AMRL)** constitutes the primary methodological contribution of this work. AMRL introduces class-dependent, trainable margins directly in logit space to explicitly encode the asymmetric risk structure of avalanche forecasting. Avalanche samples are required to exceed a positive safety margin, while non-avalanche samples are constrained by a separate majority margin to limit false alarms. All margin and penalty parameters are optimized jointly with network weights, enabling adaptive and risk-aware decision boundary shaping under extreme class imbalance.
 
 ---
 
 ## Code Structure
 
-The repository structure mirrors the experimental workflow described in relevant sections of the paper, with particular emphasis on loss-function experimentation. Unlike modular loss libraries, **all loss functions are implemented as distinct methods within the training code**, ensuring consistent data flow, shared model state, and identical optimization conditions across experiments. The detailed structure is defined in code_structure.md file.
+The repository structure mirrors the experimental workflow described in relevant sections of the paper, with particular emphasis on loss-function experimentation. Unlike modular loss libraries, **all loss functions are implemented as distinct methods within the training code**, ensuring consistent data flow, shared model state, and identical optimization conditions across experiments. **The detailed structure is defined in code_structure.md file.**
 
 
 ### Loss Function Implementation Strategy
