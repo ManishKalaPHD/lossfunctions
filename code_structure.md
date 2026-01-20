@@ -1,5 +1,5 @@
 Below is a structured, technical explanation of the key methods, the **deep network architecture**, and the **evaluation metrics** used in the provided notebook
-**“Asymmetric Margin Reinforcement Loss (AMRL) for Imbalanced Datasets – TensorFlow – Forecasting GAN.”**
+**“Loss Functions for Imbalanced Datasets.”**
 
 ---
 
@@ -23,7 +23,7 @@ Below is a structured, technical explanation of the key methods, the **deep netw
 
 ---
 
-#### (b) **PGFLossTF (Policy Gradient–based Focal Loss)**
+#### (b) **PGFLossTF (Performance Guided Focal Loss)**
 
 * **Purpose:** Combine reinforcement learning concepts with focal loss.
 * **Core idea:**
